@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>文件预览</title>
+    <link rel="stylesheet" href="./css/pdfh5.css" />
+    <style>
+      .pdfjs .pdfViewer{padding:0 !important;}
+      body,html{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #FILE_BOX{
+        background: #999;
+        margin: 0;
+        padding: 0;
+      }
+      #app .nodata{
+        text-align: center;
+        margin: 0;
+        color: rgba(255,255,255,.5);
+      }
+
+      #FILE_BOX .tip{
+        position: absolute;
+        z-index: 1;
+        left: 10px;
+        right: 10px;
+        top: 20px;
+        border-radius: 50%;
+        color: rgba(255,255,255,.5);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .pdfjs .viewerContainer{overflow-x: hidden !important}
+      /* 占满当前父元素盒子 */
+      .j-full-curbox{position:absolute;top:0;left:0;right:0;bottom:0;margin:0;overflow-x:hidden;}
+      .j-full-center{position: absolute;top:50%;left: 50%;transform: translate(-50%,-50%);}
+
+      
+    </style>
+     <!-- <script src="https://cdn.bootcss.com/vConsole/3.3.0/vconsole.min.js"></script>
+     <script>
+       var vConsole = new VConsole();
+     </script> -->
+
+    <!--不要放下面去 放这里保证页面加载前加载完js-->
+    <script src="./js/pdf.js"></script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/pdf.worker.js"></script>
+    <script src="./js/pdfh5.js"></script>
+  </head>
+  <body>
+    <div id="FILE_BOX" class="j-full-curbox">
+      <div class="tip">操作说明：双击复原,双指拉伸缩放</div>
+      <div id="app"></div>
+    </div>
+
+    
+
+    <script src="./js/config.js"></script>
+    <script src="./js/alloyfinger/0.1.15/alloy_finger.js"></script>
+    <script src="./js/alloyfinger/0.1.15/to.js"></script>
+    <script src="./js/alloyfinger/0.1.15/transform.js"></script>
+    <script>
+      const file = Config.getParams() && Config.getParams().file;
+
+      // file = 'https://img.cdn.vihost.cn/pro/tem/testcharities/images/pdf/2022/09/14/16631462212859282.pdf';
+      // file = 'https://img.cdn.vihost.cn//vue_cli/zhubb/template_file/cs.pdf';
+      if(file){
+        const flieArr = file.split('.'); // 根据.分割数组
+        let suffix = flieArr[flieArr.length - 1]; // 取最后一个
+        suffix = suffix && suffix.toLocaleLowerCase(); // 将后缀所有字母改为小写方便操作
+        console.log('suffix',suffix);
+        if(suffix == 'pdf'){
+          ajax(file)
+        }else{
+          $('#app').append(`<p class="nodata j-full-center">暂只支持pdf文件预览</p>`)
+        }
+        
+      }else{
+        $('#app').append(`<p class="nodata j-full-center">请在地址栏携带pdf链接进行预览</p>`)
+      }
+
+      // 请求
+      function ajax(url){
+        $.ajax({type:'get',url:decodeURIComponent(url),xhrFields:{responseType: "arraybuffer"},success:(data)=>{
+            console.log('data',data);
+            alloyFingr()
+            pdfh5 = new Pdfh5("#app", {
+              data,
+              lazy:true,
+              scale:2,	// 最大比例5，默认1.5	pdf渲染的比例	
+              zoomEnable:false,	//是否允许pdf手势缩放 默认true
+            });
+          }
+        })
+      }
+
+      function ease(x){
+        return Math.sqrt(1 - Math.pow(x - 1, 2))
+      }
+
+      function alloyFingr(){
+        var dom = document.querySelector('#app'),FILE_BOX=document.querySelector('#FILE_BOX'); 
+        Transform(dom)
+        new AlloyFinger(FILE_BOX,{
+        multipointStart:function(evt){
+          evt.preventDefault();
+          initScale = dom.scaleX;
+        },
+
+        doubleTap:function(evt){
+          new To(dom,'translateY',0,300,ease)
+          new To(dom,'translateX',0,300,ease)
+          new To(dom,'scaleY',1,300,ease)
+          new To(dom,'scaleX',1,300,ease)
+        },
+
+        pinch:function(evt){
+          evt.preventDefault();
+          dom.scaleY = initScale * evt.zoom;
+          dom.scaleX = initScale * evt.zoom;
+        },
+
+        // 只有放大的情况才能够左右偏移查看
+        pressMove: evt => {
+          // evt.preventDefault()
+          if(dom.scaleY > 1){
+            evt.preventDefault()
+            dom.translateX += evt.deltaX;
+            dom.translateY += evt.deltaY;
+          }
+        },
+
+        // 触摸移动
+        // pressMove:function(evt){
+        //   evt.preventDefault();
+
+        //   // 下滑正数 上划负数
+        //   dom.translateY += evt.deltaY;
+        //   dom.translateX += evt.deltaX;
+        // }
+      })
+    }
+
+ 
+        
+    </script>
+  </body>
+</html>

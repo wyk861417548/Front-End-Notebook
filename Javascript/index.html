@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    Function.prototype.myApply = function(obj,args){
+      let fn = Symbol('fn')
+      let o =obj || window;
+
+      o[fn] = this;
+
+      let result = o[fn](...args)
+      delete o[fn]
+
+      return result
+    }
+
+    function hello(a,b,c){
+      console.log('xxxxx',this,this.name);
+      console.log('a,b,c',a,b,c);
+    }
+
+    Function.prototype.myBind = function(obj,...args){
+      let that = this;
+      
+      let fBound = function(){
+        // 解决new 操作是this指向问题
+        that.myApply(this instanceof that?this:obj,args.concat(Array.prototype.slice.call(arguments)))
+      }
+      // 继承属性和方法
+      fBound.prototype = Object.create(that.prototype)
+      return fBound;
+    }
+
+    let fn = hello.bind({name:666},222)
+    new fn(3333)
+
+    let fn1 = hello.myBind({name:666},222)
+    new fn1(3333)
+  </script>
+
+  <!-- 深浅拷贝 -->
+  <!-- <script>
+    function cloneEasy(target){
+      if(!(target !== null && typeof target === 'object'))return target;
+
+      const cloneTarget = {}
+      for (const key in target) {
+        cloneTarget[key] = target[key];
+      }
+      return cloneTarget;
+    }
+
+
+    function cloneDeep(target,map = new WeakMap()){
+      if(!(target !== null && typeof target === 'object'))return target;
+
+      const cloneTarget = Array.isArray(target)?[]:{};
+
+      if(map.get(target))return map.get(target);
+      map.set(target,cloneTarget)
+
+      for (const key in target) {
+        cloneTarget[key] = cloneDeep(target[key],map)
+      }
+      return cloneTarget
+    }
+
+    var aim3 = {a:1,xx:null,me:undefined,b:{ball:"篮球",mm:{sex:"男",arr:[1,2,3,4]}},fn:function(){console.log("----------")}}
+    aim3.xxx = aim3;
+    var clone3 = cloneDeep(aim3);
+    clone3.a = 2;
+    clone3.aim3 = aim3;
+    console.log('aim3',aim3);
+    console.log('clone3',clone3);
+  </script> -->
+
+  <!-- 节流防抖 -->
+  <!-- <script>
+    function resize(){
+      console.log('窗口变化了');
+    }
+    // window.addEventListener('resize',debounce(resize,2000))
+    window.addEventListener('resize',throttle(resize,2000))
+    // 防抖：事件被触发n秒后，事件执行，如果再这段时间内事件再次被触发，重新计时
+    function debounce(fn,wait){
+      console.log('666666');
+      let timer = null;
+      return function(){
+        let that = this,args= arguments;
+        if(timer) clearTimeout(timer)
+        timer = setTimeout(()=>{
+          fn.apply(that,args)
+        },wait)
+      }
+    }
+
+    // 节流：再规定时间内无论事件触发多少此，只会执行一次
+    function throttle(fn,wait){
+      let timer = null;
+      return function(){
+        let that =this,args = arguments;
+        if(!timer){
+          timer = setTimeout(()=>{
+            timer = null;
+            fn.apply(that,args)
+          },wait)
+        }
+      }
+    }
+  </script> -->
+
+  <!-- ajax -->
+  <!-- <script>
+    request({
+      url:'http://192.168.0.195:8091/charities/uploadYearPdfFile/fileUpload',
+      headers:{'Content-Type': 'multipart/form-data'}
+    })
+
+    function request({url,method,headers}){
+      return new Promise(function(resolve,reject){
+        // 创建
+        let xhr = new XMLHttpRequest();
+        
+        xhr.open(method,url,true) //true是否异步
+
+        xhr.onreadystatechange = function(){
+          // 0: 请求未初始化 1: 服务器连接已建立 2: 请求已接收 3: 请求处理中 4: 请求已完成，且响应已就绪
+          if(this.readyState !== 4)return;
+          
+          this.status === 200?resolve(this.response):reject(new Error(this.statusText))
+        }
+
+        xhr.responseType = "json";// 设置响应的数据类型
+
+        if(headers){
+          for (const key in headers) {
+            xhr.setRequestHeader(key,headers[key]); // 设置请求头信息
+          }
+        }
+        xhr.send();
+      })
+    }
+  </script> -->
+</body>
+</html>
