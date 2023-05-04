@@ -1,8 +1,9 @@
 <template>
   <div ref="tableWrapper">
     <el-table ref="table" @filter-change='handleFilterChange' :data="tableData" :row-class-name="useHeighLight ? tableRowClassName : ''" @sort-change="handleSortChange"  @selection-change="handleSelectionChange" :row-key="rowKey" :tree-props="tree">
-      <!-- 是否开启勾选 -->
-      <el-table-column v-if="selection" type="selection" width="70" fixed="left" :selectable="selectable" ></el-table-column>
+      
+      <!-- 是否开启勾选  reserve-selection 分页保持勾选 同时设置row-key-->
+      <el-table-column v-if="selection" :reserve-selection='true' type="selection" width="70" fixed="left" :selectable="selectable" ></el-table-column>
  
       <!-- 序号 -->
       <el-table-column v-if="index" type="index" label="序号" width="70">
@@ -121,7 +122,7 @@ export default {
 
     // 行数据的 Key，用来优化 Table 的渲染
     rowKey:{
-      type:String,
+      type:String | Function,
       default:""
     },
 
