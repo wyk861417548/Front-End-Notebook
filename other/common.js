@@ -160,3 +160,21 @@ export function StringTakeoff(str, start, end, fixflag = '*') {
 
   return fixStr.join('')
 }
+
+
+export function add(arg1, arg2) {
+  arg1 = arg1.toString(), arg2 = arg2.toString();
+  var arg1Arr = arg1.split("."), arg2Arr = arg2.split("."), d1 = arg1Arr.length == 2 ? arg1Arr[1] : "", d2 = arg2Arr.length == 2 ? arg2Arr[1] : "";
+  var maxLen = Math.max(d1.length, d2.length);
+  var m = Math.pow(10, maxLen);
+  var result = Number(((arg1 * m + arg2 * m) / m).toFixed(maxLen));
+  var d = arguments[2];
+  return typeof d === "number" ? Number((result).toFixed(d)) : result;
+}
+
+export function mul(arg1,arg2){
+  let m = 0,s1=String(arg1),s2=String(arg2);
+  m+=s1.split('.')[1]?s1.split('.')[1].length:0;
+  m+=s2.split('.')[1]?s2.split('.')[1].length:0;
+  return Number(s1.replace('.',''))*Number(s2.replace('.',''))/Math.pow(10,m)
+}

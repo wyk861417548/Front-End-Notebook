@@ -34,12 +34,6 @@
 import * as $http from '@/api/pages/common.js'
 export default {
   props:{
-    // 用于父组件接受已上传的图片名称
-    name:{
-      type:String,
-      default:"upload"
-    },
-
     title:{
       type:String,
       default:"预览"
@@ -63,12 +57,6 @@ export default {
       default:'uid'
     },
 
-    // 默认展示图片
-    defaultFileList:{
-      type:Array,
-      default:()=>[]
-    },
-
     // 上传图片类型
     fileType:{
       type:Array,
@@ -81,22 +69,25 @@ export default {
       type:Number,
       default:2
     },
+
+    value:{
+      type: String | Array,
+      default:''
+    },
   },
 
   data() {
     return {
       loading:false,
+
       // 弹窗显示图片
       dialogImageUrl: '',
-
-      // 是否显示预览图片弹窗
-      dialogVisible: false,
 
       // 是否禁用图片上预览 删除操作
       disabled: false,
       
       // 上传图片列表
-      fileList: []
+      fileList: [],
     };
   },
 
@@ -107,24 +98,15 @@ export default {
     }
   },
 
-  created(){
-    console.log('this.defaultFileList',this.defaultFileList);
-    if(this.defaultFileList.length > 0){
-      this.fileList = this.defaultFileList;
-    }
-  },
-
   methods: {
     // 预览照片
     handlePictureCardPreview(file) {
-      console.log('file',file);
       this.dialogImageUrl = file[this.url];
-      // this.dialogVisible = true;
       this.$refs.dialog.show = true;
     },
   
-    // 移除照片
-    handleRemove(file) {
+    // 移除文件  由于 before-upload返回false自动调用before-remove和on-remove钩子问题解决方法
+    handleRemove(file,fileList) {
       this.fileList.map((item,index)=>{
         if(item[this.uid] == file[this.uid]){
           this.fileList.splice(index,1);
@@ -154,8 +136,8 @@ export default {
 
       var param = new FormData();
 
-      this.$Common.kCompass({fileinput:file}).then(({result}) => {
-        var files = this.$Common.dataURLtoFile(result,file.name)
+      this.$config.kCompass({fileinput:file}).then(({result}) => {
+        var files = this.$config.dataURLtoFile(result,file.name)
 
         param.append('file',files);
 
@@ -165,18 +147,33 @@ export default {
     },
 
     // 上传图片
-    upload(param){
+    upload(data){
       this.loading = true;
-      $http.upload(param).then(res=>{
+      $http.upload(data).then((res)=>{
         this.fileList.push(res.data);
         this.loading = false;
-      })
+      }).catch(()=>{this.loading= false})
     },
+
+    // 组件使用v-model绑定 直接处理成字符串拼接返回
+    listToString(list){
+      return list.map(item=>item[this.url]).join(',')
+    }
   },
+
   watch:{
+    value:{
+      handler(newVal){
+        if(newVal){
+          this.fileList = !Array.isArray(newVal) ? newVal.split(',').map(item=>({[this.url]:item})) : newVal;
+        }
+      },
+      immediate: true
+    },
+
     fileList(newVal){
-      this.$emit('input',newVal)
-      this.$emit("change",{name:this.name,value:newVal})
+      this.$emit('input',this.listToString(newVal))
+      this.$emit("change",{value:newVal})
     }
   }
 }
@@ -185,6 +182,7 @@ export default {
   ::v-deep.custom-upload{
     .el-upload--picture-card{
       background-color: #fff;
+      margin: 0 8px 8px 0;
     }
     .disabled .el-upload--picture-card{
       display: none; 
@@ -197,8 +195,5 @@ export default {
     .el-upload-list__item.is-ready {
       display: none;
     }
-    
-
   }
-  
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <upLoad @change='setImg' @focus="focus"></upLoad>
+    <upLoad @change='change' @focus="focus"></upLoad>
     <div ref="editor" id="editor—wrapper">
       <div id="toolbar-container"><!-- 工具栏 --></div>
       <div id="editor-container"><!-- 编辑器 --></div>
@@ -13,7 +13,7 @@ let EDITOR = null;
 import upLoad from './upLoad.vue'
 export default {
   props:{
-    defaultHtml:{
+    value:{
       type:String,
       default:'<p></p>'
     }
@@ -29,9 +29,13 @@ export default {
     }
   },
 
-  created(){
-    console.log('this.defaultHtml',this.defaultHtml);
-    this.initHtml = this.defaultHtml;
+  watch:{
+    value:{
+      handler(newVal){
+        this.initHtml = newVal;
+      },
+      immediate:true
+    }
   },
 
   mounted(){
@@ -45,6 +49,7 @@ export default {
       const editorConfig = {
         onChange(editor) {
           that.htmlStr = editor.getHtml();
+          that.$emit('input',that.htmlStr)
           that.$emit('change',that.htmlStr)
         },
       };
@@ -56,14 +61,13 @@ export default {
         mode: "simple", // or 'simple'
       });
       
-      
       const toolbarConfig = {
         // 排除掉某些菜单
         excludeKeys:["headerSelect","blockquote","codeBlock","header1","header3","header2","group-image"],
         // 插入的位置，基于当前的 toolbarKeys
         insertKeys:{
           index: 10,
-          keys: ["color","fontSize","fontFamily","lineHeight","insertImage"]
+          keys: ["fontSize","fontFamily","lineHeight","insertImage"]
         },
       };
       
@@ -73,11 +77,10 @@ export default {
         config: toolbarConfig,
         mode: "simple", //default or 'simple'
       });
-      // console.log('toolbar.getConfig()',toolbar.getConfig());
     },
 
     // 动态插入图片
-    setImg(url){
+    change(url){
       EDITOR.dangerouslyInsertHtml(`<img src="${url}" alt="">`)
     },
 
