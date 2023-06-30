@@ -1,5 +1,5 @@
 <template>
-  <el-cascader v-model="list" :options="options" :props='props' collapse-tags clearable></el-cascader>
+  <el-cascader ref="cascader" v-model="list" :options="options" filterable :props='props' collapse-tags clearable @change="change"></el-cascader>
 </template>
 
 <script>
@@ -10,7 +10,7 @@
         default:()=>{}
       },
       value:{
-        type:String,
+        type:String | Number,
         default:''
       },
 
@@ -25,21 +25,49 @@
       }
     },
 
+    methods: {
+      change(value){
+        let label = this.$refs['cascader'].getCheckedNodes()[0];
+        if(label){
+          label = label.pathLabels.join('');
+        }
+
+        if(this.props.emitPath == false){
+          this.$emit('input',value)
+          this.$emit("change",{name:label,value})
+          return;
+        }
+
+        this.$emit('input',value.join(','))
+        this.$emit("change",{name:label,value})
+      },
+
+      clear(){
+        if(!this.$refs.cascader)return;
+        try{
+          this.$refs.cascader.clearValue()
+        }catch(err){
+          this.$refs.cascader.handleClear()
+        }
+      }
+    },
+
     watch:{
       // 默认值设置
       value:{
         handler(newVal){
           if(newVal){
+            if(this.props.emitPath == false){
+              this.list = newVal;
+              return;
+            }
             this.list = !Array.isArray(newVal) ? newVal.split(',') : newVal;
+          }else{
+            this.clear();
           }
         },
         immediate: true
       },
-
-
-      list(newVal){
-        this.$emit('input',newVal.join(','))
-      }
     }
   }
 </script>

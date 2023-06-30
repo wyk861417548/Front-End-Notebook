@@ -161,7 +161,12 @@ export function StringTakeoff(str, start, end, fixflag = '*') {
   return fixStr.join('')
 }
 
-
+/**
+ * 两数相加
+ * @param {*} arg1 
+ * @param {*} arg2 
+ * @returns 
+ */
 export function add(arg1, arg2) {
   arg1 = arg1.toString(), arg2 = arg2.toString();
   var arg1Arr = arg1.split("."), arg2Arr = arg2.split("."), d1 = arg1Arr.length == 2 ? arg1Arr[1] : "", d2 = arg2Arr.length == 2 ? arg2Arr[1] : "";
@@ -172,6 +177,12 @@ export function add(arg1, arg2) {
   return typeof d === "number" ? Number((result).toFixed(d)) : result;
 }
 
+/**
+ * 两数相乘
+ * @param {*} arg1 
+ * @param {*} arg2 
+ * @returns 
+ */
 export function mul(arg1,arg2){
   let m = 0,s1=String(arg1),s2=String(arg2);
   m+=s1.split('.')[1]?s1.split('.')[1].length:0;

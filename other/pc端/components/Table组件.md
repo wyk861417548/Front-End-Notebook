@@ -79,3 +79,26 @@ handleCurrentChange(val){
   this.getTableData();
 },
 ```
+
+###### 筛选
+```
+computed:{
+    // checked:表格某列是否能够点击  value:后端穿过来的值所对应的名称 slot:'name'(动态生成插槽) 
+    tableHead(){
+      const dicts = ['sys_user_sex']
+      
+      //obj.item 格式 [{text: 'xxx', value: 'xxx'}]
+      var obj ={};
+      dicts.map(item=>{
+        obj[item] = this.dict.type[item] && this.dict.type[item].map(({label,value})=>({text:label,value}))
+      })
+
+      return [
+        {prop:'xxx',label:"xxx"},
+        {prop:'xxx',label:"xxx"},
+        {prop:'xxx',label:"状态",filters:obj.sys_user_sex,slot:'status'},
+      ]
+    },
+    
+  },
+```
