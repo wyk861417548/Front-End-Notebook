@@ -1,6 +1,14 @@
 ### 版本管理 fnm
 
-#### 方法一
+##### !!!注意：fnm（Fast Node Manager）目前不支持在 Windows 的命令提示符（cmd）中使用，只能使用`PowerShell`
+打开PowerShell快捷键  `Shift + 右键`
+
+#### 安装 方法一 
+前方 https://github.com/Schniz/fnm/releases 下载对应的包
+
+放入 D 盘 `D:\fnm`（自定义），将其目录加入环境变量 path 中 ` D:\fnm`
+
+#### 安装 方法二
 ###### 使用Chocolatey安装fnm
 若要在Windows上安装Chocolatey，请按照以下步骤进行操作：
 
@@ -37,26 +45,12 @@ choco install -y fnm
 fnm -V
 ```
 
-#### 方法二
-前方 https://github.com/Schniz/fnm/releases 下载
-
-放入 D 盘 `D:\fnm`（自定义），将其目录加入环境变量 path 中 ` D:\fnm`
-
-
 #### 配置PowerShell配置文件
 - 1.打开 PowerShell 输入 `notepad $PROFILE` 打开配置文件， 如果没有创建过配置文件会让你创建一个
 
 - 2.将内容添加到您的配置文件的末尾：`fnm env --use-on-cd | Out-String | Invoke-Expression` 然后保存关闭
 
 - 3.运行 ` . $PROFILE` 重新运行配置文件
-
-
-
-> 
-> ### !!!注意：以上两种方法只能够PowerShell能够正常使用
-> 
-
-
 
 #### fnm 命令
 ###### 常用命令
@@ -102,7 +96,7 @@ $ fnm alias 18.21.1 v18
 $ fnm use v18
 ```
 
-#### fnm 安装 其他包管理
+#### fnm 为对应的node版本 安装 其他包管理
 选择 node 版本 `fnm use xxx` 输入以下命令
 ```
 # 安装yarn
