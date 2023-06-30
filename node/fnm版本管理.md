@@ -1,49 +1,14 @@
-### 版本管理 fnm
-
+### 版本管理 fnm 
+##### !!!注意：把全局的`node`删除
 ##### !!!注意：fnm（Fast Node Manager）目前不支持在 Windows 的命令提示符（cmd）中使用，只能使用`PowerShell`
-打开PowerShell快捷键  `Shift + 右键`
+- 打开PowerShell快捷方式  `Shift + 右键`
+- `fnm use xxx` 切换node版本不支持，以及安装的node在 `cmd` 中运行也是 不是内部命令提示
+- so 使用`PowerShell`吧， vscode终端是`PowerShell`
 
-#### 安装 方法一 
+#### 安装 方法一（推荐）
 前方 https://github.com/Schniz/fnm/releases 下载对应的包
 
 放入 D 盘 `D:\fnm`（自定义），将其目录加入环境变量 path 中 ` D:\fnm`
-
-#### 安装 方法二
-###### 使用Chocolatey安装fnm
-若要在Windows上安装Chocolatey，请按照以下步骤进行操作：
-
-1. 以管理员身份运行 PowerShell：
-  - 按下Win + X，然后选择"Windows PowerShell（管理员）"，以打开以管理员身份运行的PowerShell。
-
-2. 确保执行策略是允许脚本运行：
-  - 在管理员PowerShell中，运行以下命令：
-  
-    ```
-    Set-ExecutionPolicy Bypass -Scope Process -Force
-    ```
-
-3. 安装Chocolatey：
-  - 在管理员PowerShell中，运行以下命令以安装Chocolatey：
-    ```
-    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    ```
-4. 验证安装：
-  - 在管理员PowerShell中，运行以下命令以验证Chocolatey是否正确安装：
-    ```
-    choco
-    ```
-
-现在，你已成功安装了Chocolatey。你可以使用Chocolatey来安装各种软件包和工具。记住，每次打开新的PowerShell窗口时，都需要进行步骤 1 和步骤 2 以使Chocolatey生效。
-
-###### 安装fnm
-```
-choco install -y fnm
-```
-
-打开 `cmd` 验证是否安装完成
-```
-fnm -V
-```
 
 #### 配置PowerShell配置文件
 - 1.打开 PowerShell 输入 `notepad $PROFILE` 打开配置文件， 如果没有创建过配置文件会让你创建一个
@@ -96,6 +61,12 @@ $ fnm alias 18.21.1 v18
 $ fnm use v18
 ```
 
+##### 问题：
+vue create 创建项目报错 `ERROR  ~/.vuerc may be outdated. Please delete it and re-run vue-cli in manual mode.`
+```
+  将~/.vuerc文件删除（路径：C:\Users\Administrator）
+```
+
 #### fnm 为对应的node版本 安装 其他包管理
 选择 node 版本 `fnm use xxx` 输入以下命令
 ```
@@ -104,4 +75,41 @@ npm install -g yarn
 
 # 安装pnpm
 npm install -g pnpm
+```
+
+#### 安装 方法二
+###### 使用Chocolatey安装fnm
+若要在Windows上安装`Chocolatey`，请按照以下步骤进行操作：
+
+1. 以管理员身份运行 PowerShell：
+  - 按下Win + X，然后选择"Windows PowerShell（管理员）"，以打开以管理员身份运行的PowerShell。
+
+2. 确保执行策略是允许脚本运行：
+  - 在管理员PowerShell中，运行以下命令：
+  
+    ```
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    ```
+
+3. 安装`Chocolatey`：
+  - 在管理员PowerShell中，运行以下命令以安装`Chocolatey`：
+    ```
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    ```
+4. 验证安装：
+  - 在管理员PowerShell中，运行以下命令以验证`Chocolatey`是否正确安装：
+    ```
+    choco
+    ```
+
+现在，你已成功安装了`Chocolatey`。你可以使用`Chocolatey`来安装各种软件包和工具。记住，每次打开新的PowerShell窗口时，都需要进行步骤 1 和步骤 2 以使`Chocolatey`生效。
+
+###### 安装fnm
+```
+choco install -y fnm
+```
+
+打开 `cmd` 验证是否安装完成
+```
+fnm -V
 ```
