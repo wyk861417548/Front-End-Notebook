@@ -40,7 +40,7 @@ fnm -V
 #### 方法二
 前方 https://github.com/Schniz/fnm/releases 下载
 
-放入 D 盘 `D:\fnm（自定义）`，将其目录加入环境变量 path 中 ` D:\fnm`
+放入 D 盘 `D:\fnm`（自定义），将其目录加入环境变量 path 中 ` D:\fnm`
 
 
 #### 配置PowerShell配置文件
