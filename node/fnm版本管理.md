@@ -13,9 +13,11 @@
 #### 配置PowerShell配置文件
 - 1.打开 PowerShell 输入 `notepad $PROFILE` 打开配置文件， 如果没有创建过配置文件会让你创建一个
 
+- 1.1 如果`notepad $PROFILE`输入后， 系统提示 `找不到指定路径` ,使用 `if (!(Test-Path $PROFILE)) { New-Item -Type File -Path $PROFILE -Force }`创建，然后步骤一操作。
+
 - 2.将内容添加到您的配置文件的末尾：`fnm env --use-on-cd | Out-String | Invoke-Expression` 然后保存关闭
 
-- 3.运行 ` . $PROFILE` 重新运行配置文件
+- 3.运行 `. $PROFILE` 重新运行配置文件
 
 #### fnm 命令
 ###### 常用命令
@@ -48,7 +50,7 @@ $ fnm install --lts
 $ fnm install 18
 
 # 安装指定版本
-$ fnm install 18.21.1
+$ fnm install 18.16.1
 
 ```
 
