@@ -72,11 +72,14 @@ vue create 创建项目报错 `ERROR  ~/.vuerc may be outdated. Please delete it
 #### fnm 为对应的node版本 安装 其他包管理
 选择 node 版本 `fnm use xxx` 输入以下命令
 ```
-# 安装yarn
-npm install -g yarn
+# 安装yarn（1.22.19）
+npm install -g yarn@<version>
 
-# 安装pnpm
-npm install -g pnpm
+# 安装pnpm（8.6.5）
+npm install -g pnpm@<version>
+
+# 安装vue（4.5.11）
+npm install -g @vue/cli@<version>
 ```
 
 #### 安装 方法二
@@ -114,4 +117,5 @@ choco install -y fnm
 打开 `cmd` 验证是否安装完成
 ```
 fnm -V
+
 ```

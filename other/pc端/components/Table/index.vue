@@ -1,6 +1,13 @@
 <template>
   <div ref="tableWrapper">
-    <el-table ref="table" @filter-change='handleFilterChange' :data="tableData" :row-class-name="useHeighLight ? tableRowClassName : ''" @sort-change="handleSortChange"  @selection-change="handleSelectionChange" :row-key="rowKey" :tree-props="tree">
+    <el-table ref="table" 
+      :data="tableData" 
+      :row-key="rowKey" 
+      :tree-props="tree"
+      :row-class-name="useHeighLight ? tableRowClassName : ''" 
+      @filter-change='handleFilterChange' 
+      @sort-change="handleSortChange"  
+      @selection-change="handleSelectionChange" >
       
       <!-- 是否开启勾选  reserve-selection 分页保持勾选 同时设置row-key-->
       <el-table-column v-if="selection" :reserve-selection='true' type="selection" width="70" fixed="left" :selectable="selectable" ></el-table-column>
@@ -178,8 +185,9 @@ export default {
       this.$emit('handleChecked',row)
     },
 
-    handleFilterChange(key,value){
-      console.log('key',key,value);
+    // filter筛选
+    handleFilterChange(data){
+      this.$emit('handleFilterChange',data)
     },
 
     // -----------------------------分页---------------------
