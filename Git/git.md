@@ -37,9 +37,15 @@ git config --global http.sslVerify "false"
 ```
 
 #### 分支管理
-```
-  分支删除
-    -删除本地 git branch --delete xxx
-    -删除远程分支 git push origin --delete xxx
-
-```
+  ###### 1.查看远程和本地所有分支
+    git branch -a
+  ###### 2. 使用如下git命令查看所有远程分支
+    git branch -r
+  ###### 3.拉取远程分支创建本地分支
+    git checkout -b 本地分支名 origin/远程分支名
+  ###### 4.切换到dev的分支
+    git checkout dev
+  ###### 5.删除远程分支
+    git push origin --delete xxx
+  ###### 6.删除本地分支dev
+    git branch --delete xxx

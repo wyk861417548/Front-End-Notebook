@@ -20,7 +20,7 @@ var style=document.createElement("style"); style.innerHTML='*{user-select: auto!
 </script>
 ```
 
-##### 5.计算距离( lat,lng（自己的位置坐标）,aimLat,amiLng（目标位置的坐标）)
+#### 5.计算距离( lat,lng（自己的位置坐标）,aimLat,amiLng（目标位置的坐标）)
 ```
 export function getDistance(lat,lng,aimLat,amiLng){
   var radLat1 = this.getRad(lat);

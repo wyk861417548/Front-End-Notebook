@@ -1,7 +1,7 @@
 #### 1.数据类型
 参考：https://juejin.cn/post/7061588533214969892#heading-26
 ```
-ECMAScript标准规定了8种数据类型，其把这8种数据类型又分为两种：原始类型和对象类型。
+ECMAScript标准规定了8种数据类型，其把这8种数据类型又分为两种：
 - 基本类型(7种)：string,boolean,undefined,number,null 以及es6 symbol es10的bigint
   - symbol 创建独一无二且不可变的数据类型
   - bigint 可以表示任意精度的整数
@@ -87,7 +87,7 @@ Object.prototype.toString.call([]); // "[object Array]"
 Object.prototype.toString.call(function () {}); // "[object Function]"
 ```
 
-### 4.闭包
+#### 4.闭包
 ```
 MDN对闭包的定义：
 闭包是指那些能够访问自由变量的函数.
@@ -115,7 +115,7 @@ ECMAScript，闭包指的是：
 
 ```
 
-##### 5.new操作符具体干了什么 如何实现？
+#### 5.new操作符具体干了什么 如何实现？
 - 1.首先创建了一个空对象
 - 2.将对象的原型设置为函数的原型
 - 3.让函数的this指向这个对象，执行函数的代码（为这个对象添加属性）
@@ -136,15 +136,15 @@ function objectFactory(){
 }
 ```
 
-##### 6.内部属性 [[Class]] 是什么？
+#### 6.内部属性 [[Class]] 是什么？
 所有typeof 返回值为 object的对象都包含一个内部属性Class,他返回这个对象的具体类型名称
 
-##### 7.原型和原型链
+#### 7.原型和原型链
 原型:每个js对象(除null)创建的时候,都会与之关联另一个对象,这个对象就是我们说的原型
 
 原型链：当调用这个对象的方法的时候，如果对象上没有就会去原型上找，如果还没有就回去原型的原型上找，这个就是原型链
 
-##### 8.js创建对象有哪些方式，继承又有哪些？
+#### 8.js创建对象有哪些方式，继承又有哪些？
 - 对象创建
   - 工厂模式
   - 构造函数模式
@@ -155,14 +155,14 @@ function objectFactory(){
   - 稳妥构造函数模式
 
 - 继承
-  原型链继承 
-  借用构造函数继承
-  组合式继承
-  原型式继承
-  寄生式继承
-  寄生组合式继承
+  - 原型链继承 
+  - 借用构造函数继承
+  - 组合式继承
+  - 原型式继承
+  - 寄生式继承
+  - 寄生组合式继承
 
-###### 9. Ajax 是什么? 如何创建一个 Ajax？
+#### 9. Ajax 是什么? 如何创建一个 Ajax？
 ajax是一种异步通讯，通过js脚本像服务端发起通讯，然后根据服务器返回的数据，更新网页的相应部分，而不用刷新整个页面。
 
 ```
@@ -192,23 +192,25 @@ function request({url,method,headers}){
 }
 ```
 
-##### 10.游览器缓存机制？
-- 强缓存：
-  通过设置Expires时间 和 Cache-Control 的 max-age
+#### 10.xxx？
 
-- 协商缓存:
-  - 1.ETag（服务端） 和 if-none-match（来自游览器传值）
-    通过比对文件内容有没有改变（获取文件的md5字）
+#### 11.前端模块化
+- `CommonJs` (module.exports  require)与 `es6模块` (import export)：
+  - CommonJs 输出的是值的拷贝（浅拷贝），输出的时候是加载整个模块，生成一个对象，然后在从这个对象上读取方法，这种加载被称为 ‘运行时加载’
 
-  - 2.Last-modified 和 if-modified-since
-    通过比对文件上次修改时间（获取文件最后修改的时间）
+  - es6模块 是对模块的引用，在import时可以指定加载某个值，而不是加载整个模块，这种加载被称为 ‘编译时加载’
 
-##### 11.前端模块化
+- AMD 与 CMD区别：
 ```
-- CommonJs  
-  module.exports  require
+- 依赖：
+  AMD 推崇依赖前置，在定义模块的时候就要声明起依赖的模块。
+  CMD 推崇就近依赖，只有在用到某个模块的时候在用require
 
-- AMD
+- 依赖模块的执行顺序：
+  AMD：在依赖模块加载完后执行依赖模块，依赖模块的执行顺序和我们书写依赖模块执行代码的顺序不一致
+  CMD：在所有的依赖模块进入回调函数，遇到require的语句才执行对应的模块，模块执行顺序和书写顺序一致
+
+栗子：AMD
 define(["./a", "./b"], function(a, b) {
   // 依赖必须一开始就写好
   a.doSomething();
@@ -217,79 +219,62 @@ define(["./a", "./b"], function(a, b) {
   // ...
 });
 
-- CMD
-  define(function(require,exports,module){
-    var a = require('./a')
-    a.fn()
-    // 此处略去 100 行
-    var b = require('./b')
-    b.fn()
-  })
-
-- es6模块
-import export
+栗子：CMD
+define(function(require,exports,module){
+  var a = require('./a')
+  a.fn()
+  // 此处略去 100 行
+  var b = require('./b')
+  b.fn()
+})
 ```
 
-- AMD 与 CMD区别：
-  - 依赖：
-    AMD 推崇依赖前置，在定义模块的时候就要声明起依赖的模块。
-    CMD 推崇就近依赖，只有在用到某个模块的时候在用require
-  
-  - 依赖模块的执行顺序：
-    AMD：在依赖模块加载完后执行依赖模块，依赖模块的执行顺序和我们书写依赖模块执行代码的顺序不一致
-    CMD：在所有的依赖模块进入回调函数，遇到require的语句才执行对应的模块，模块执行顺序和书写顺序一致
->
-- CommonJs 与 es6模块区别：
-  - CommonJs 输出的是值的拷贝（浅拷贝），输出的时候是加载整个模块，生成一个对象，然后在从这个对象上读取方法，这种加载被称为 ‘运行时加载’
-
-  - es6模块 是对模块的引用，在import时可以指定加载某个值，而不是加载整个模块，这种加载被称为 ‘编译时加载’
-
-<!-- ##### 9.简单介绍一下 V8 引擎的垃圾回收机制 -->
-
-
-##### 12.哪些操作会照成内存泄漏
+#### 12.哪些操作会照成内存泄漏
 - 意外的全局变量
 - 定时器
 - dom的引用
 - 闭包
 
-##### 13.防抖节流
+#### 13.防抖节流
 - 防抖：事件被触发n秒后，事件执行，如果再这段时间内事件再次被触发，重新计时
 ```
 function debounce(fn,wait=1000){
-  let timer = null;
+  let timeout = null;
   return function(){
-    let that = this,args = argements;
-    if(timer)clearTimerout(timer)
-    timer = setTimerout(()=>{
-      fn.apply(that,args)
+    if(timeout)clearTimeout(timeout);
+
+    timeout = setTimeout(()=>{
+      fn.apply(this,arguments)
     },wait)
   }
 }
 ```
 - 节流：在规定的时间内无论触发多少次事件，只会触发一次
 ```
-function throttle(fn,wait){
-  let timer = null;
+function throttle(fn,wait=1000){
+  let timeout = null;
+
   return function(){
-    let that =this,args=arguments;
-    if(!timer){
-      timer = setTimerout(()=>{
-        timer = null
-        fn.apply(that,args)
-      },wait)
-    }
+    if(timeout)return;
+
+    timeout = setTimeout(()=>{
+      timeout = null;
+      fn.apply(this,arguments)
+    },wait)
   }
 }
 ```
-##### 14.深浅拷贝
-- 浅拷贝
-  - 1.判断传入对象(target)类型是否是对象且不是null
-  - 2.判断值是否是数组，初始拷贝cloneTarget对象是[]，还是{}
-  - 3.遍历对象（target）并赋值给cloneTarget，
-  - 4.遍历完成后返回cloneTarget
-
+#### 14.深浅拷贝
 ```
+/**
+ * 浅拷贝
+ * @param {*} target 
+ * @returns 
+ * 1.判断传入对象(target)类型是否是对象且不是null
+ * 2.判断值是否是数组，初始拷贝cloneTarget对象是[]，还是{}
+ * 3.遍历对象（target）并赋值给cloneTarget
+ * 4.遍历完成后返回cloneTarget
+ */
 function cloneEasy(target){
   if(!(target !== null && typeof target === 'object'))return target;
 
@@ -301,14 +286,18 @@ function cloneEasy(target){
 }
 ```
 
-- 深拷贝
-  - 1.判断传入对象(target)类型是否是对象且不是null
-  - 2.判断值是否是数组，初始拷贝cloneTarget对象是[]，还是{}
-  - 3.引入WeakMap（弱引用，当下次垃圾回收机制执行时，这块内容就会释放掉）处理是否是自身调用自身
-  - 4.遍历对象（target）并递归调用，赋值给cloneTarget
-  - 5.遍历完成后返回cloneTarget
-
 ```
+/**
+ * 深拷贝
+ * @param {*} target 
+ * @param {*} map 
+ * @returns 
+ * 1.判断传入对象(target)类型是否是对象且不是null
+ * 2.判断值是否是数组，初始拷贝cloneTarget对象是[]，还是{}
+ * 3.引入WeakMap（弱引用，当下次垃圾回收机制执行时，这块内容就会释放掉）处理是否是自身调用自身
+ * 4.遍历对象（target）并递归调用，赋值给cloneTarget
+ * 5.遍历完成后返回cloneTarget
+ */
 function cloneDeep(target,map = new WeakMap()){
   if(!(target !== null && typeof target === 'object'))return target;
 
@@ -323,15 +312,19 @@ function cloneDeep(target,map = new WeakMap()){
 }
 ```
 
-##### 15.call,apply,bind实现
-- call,- apply
-  - 1.创建唯一值避免属性覆盖
-  - 2.如果没有传入目标对象默认指向window
-  - 3.将函数挂载到目标对象，改变函数指向
-  - 4.最后删除目标对象，返回结果
-  
-  区别：传参不一样
-```
+#### 15.call,apply,bind实现
+````
+/**
+ * call与apply 区别：传参不一样
+ * @param {*} obj 
+ * @param  {...any} args 
+ * @returns 
+ * 
+ * 1.创建唯一值避免属性覆盖
+ * 2.如果没有传入目标对象默认指向window
+ * 3.将函数挂载到目标对象上，改变函数指向
+ * 4.最后删除目标对象上的函数，返回结果
+ */
 Function.prototype.myApply = function(obj,args){...}
 Function.prototype.myCall = function(obj,...args){
   let fn = Symbol("fn")
@@ -345,13 +338,15 @@ Function.prototype.myCall = function(obj,...args){
   return result;
   
 }
+```
 
+```
 Function.prototype.myBind = function(obj,...args){
   let that = this;
   
   let fBound = function(){
-    // 解决new 操作是this指向问题
-    that.myApply(this instanceof that?this:obj,args.concat(Array.prototype.slice.call(arguments)))
+    // 解决new 操作 this指向问题
+    that.myApply(this instanceof that?this:obj,args.concat([...arguments]))
   }
   // 继承属性和方法
   fBound.prototype = Object.create(that.prototype)
@@ -359,62 +354,193 @@ Function.prototype.myBind = function(obj,...args){
 }
 ```
 
-##### 16.什么是xss攻击？如果防范？
-- xss攻击：指的是跨站脚本攻击，是一种代码注入攻击，攻击者通过在网站注入恶意脚本，使之在用户的游览器上运行，从而获取用户信息。
-- xss的本质是网站没有对恶意脚本进行过滤，导致与正常代码混合在一起，而游览器无法分辨哪些脚本是可信的。
-
-- xss一般分为存储型，反射型，dom型
-  - 存储型：是指提交到网站数据库中，但用户请求数据的时候，服务器将其拼接为html返回给用户，从而导致恶意代码执行
-  - 反射型：是指攻击者构建了特殊的url，当服务器接收到请求后，从url中获取数据，拼接到html后返回，从而导致恶意代码执行
-  - dom型：是指攻击者构建了特殊的url，用户打开网站后，js脚本从url中获取数据，从而导致恶意代码执行。
-
-    - 反射型和存储型的区别是存储型存在数据库中，反射型存储在url中
-    - dom型 和 其他两种的区别是，dom型取出和执行恶意代码都是前端执行，属于前端javascript的漏洞，另外两种属于服务端漏洞
-
-- 防范：xss攻击防范从两方面入手，一个是恶意代码提交时，一个是游览器执行
-  - 我们对存入数据库的数据进行转义处理，但是有的数据不止一个地方使用，有些地方使用又不需要转义，所以不可靠。所以我们可以使用游览器执行来进行预防，一种是使用纯前端，不用服务端拼接返回。另一种是对插入到html中的代码进行充分的转义
-
-  - 还有一些方式，
-    - 使用csp（即白名单），告诉游览器外部哪些资源可以加载执行，从而防止恶意脚本的注入攻击。
-    - 对敏感信息进行保护，比如对cookie设置httpOnly 防止脚本获取，也可以使用验证码，避免脚本伪造用户操作。
+#### 16.xxx
 
 
-##### 17.从输入URL到看到页面发生了什么？
+#### 17.从输入URL到看到页面发生了什么？（详细可见http.md）
 - 1.游览器查找当前url是否存在缓存，并比较缓存是否过期
 - 2.DNS解析url对应的ip
+  - dns存在多级缓存，游览器缓存、系统缓存、路由器缓存、ips服务器缓存、根域名缓存、顶级域名服务器缓存、主域名服务器缓存
 - 3.根据ip建立tcp链接（三次握手）
 - 4.发送http请求
 - 5.服务器处理请求，游览器接受http响应
 - 6.游览器解析并渲染页面
 - 7.关闭tcp链接（四次挥手）
 
-- DNS
-  - dns存在多级缓存，游览器缓存、系统缓存、路由器缓存、ips服务器缓存、根域名缓存、顶级域名服务器缓存、主域名服务器缓存
+
+#### 18.compose 函数
+>函数是一个用于函数组合的高阶函数。它接受任意数量的函数作为参数，并返回一个新的函数，该函数可以将这些函数按照从右到左的顺序依次执行。
+```
+function compose(...fns){
+  return function(...args){
+    fns.reduceRight((pre,cur)=>{
+      let ret = cur(...pre)
+      return Array.isArray(ret)?ret:[ret]
+    },args)
+  }
+}
+
+function c1(x,y){
+  console.log('c1',x,y);
+  return [x+  1,y+1]
+}
+function c2(x,y){
+  console.log('c2',x,y);
+  return [x+  2,y+1]
+}
+function c3(x,y){
+  console.log('c3',x,y);
+  return [x+  3,y+1]
+}
+
+compose(c1,c2,c3)(10,5)
+```
+
+#### 19.简叙 event loop
+> 因为 JS 是单线程的，单线程就意味着，所有任务需要排队，前一个任务结束，才会执行后一个任务。为了解决排除等待问题，JS 的任务分为同步任务（synchronous）和异步任务（asynchronous）。 所有同步任务都在主线程上执行，形成一个 Stack）。异步任务（如果是 WebAPI 则会进入 WebAPI，例如 ajax setTimeout）不进入主线程，而是进入另一 Callback Queue。同步任务顺序执行，只有执行栈中的同步任务执行完了，系统才会读取任务队列中可以执行的异步任务，才会把此异步任务从事件队列中放入执行栈中执行，如此循环，直至所有任务执行完毕。这就是 EventLoop
 
 
-##### 18.async/await 和 Promise 什么区别？
-`Promise`是一种基于回调的异步编程模式，它通过链式调用`.then()`和`.catch()`来处理异步操作结果和错误
+#### 20.Promise.race
+```
+/**
+ * Promise.race
+ * @param {*} arr 
+ * @returns 
+ * 核心就是遍历传入的Promise数组集合以及Promise.resolve，当任意项成功返回，使用Promise.resolve包裹一层，最后resolve
+ * Promise.resolve() 静态方法将给定的值转换为一个 Promise。如果该值本身就是一个 Promise，那么该 Promise 将被返回；如果该值是一个 thenable 对象，Promise.resolve() 将调用其 then() 方法及其两个回调函数
+ */
+ Promise.race = (pArr)=>{
+  return new Promise((resolve,reject)=>{
+    pArr.forEach(v=>{
+      Promise.resolve(v).then(
+        res=>{resolve(res)},
+        rej=>{reject(rej)}
+      )
+    })
+  })
+}
+```
 
-`async/await` 是es7
+#### 21.Promise.all
+```
+/**
+ * Promise.all
+ * @param {*} pArr 
+ * @returns 
+ * 和Promise.race差不多，新增所有请求完成 以及 所有请求成功值的存储
+ */
+Promise.all = (pArr)=>{
+  return new Promise((resolve,reject)=>{
+    let ret = [];
+    let count = 0;
+    pArr.forEach(v=>{
+      Promise.resolve(v).then(
+        res => {
+          count++;
+          ret.push(res);
+
+          if(count === pArr.length){
+            resolve(ret)
+          }
+        },
+        rej=>{reject(rej)}
+      )
+    })
+
+    // 如果是空数组 直接返回
+    if(pArr.length === 0){
+      resolve(ret)
+    }
+  })
+}
+```
+
+#### 22.关于事件循环，两道异步代码执行输出顺序问题
+题1：：https://q.shanyue.tech/fe/js/727
+题2：
+```
+setTimeout(() => {
+  console.log("A");
+  Promise.resolve().then(() => {
+    console.log("B");
+  });
+}, 1000);
+
+Promise.resolve().then(() => {
+  console.log("C");
+});
+
+new Promise((resolve) => {
+  console.log("D");
+  resolve("");
+}).then(() => {
+  console.log("E");
+});
+
+async function sum(a, b) {
+  console.log("F");
+}
+
+async function asyncSum(a, b) {
+  await Promise.resolve();
+  console.log("G");
+  return Promise.resolve(a + b);
+}
+sum(3, 4);
+asyncSum(3, 4);
+console.log("H");
+```
+
+#### 23.网站开发如何实现图片懒加载
+- 1.位置计算 + 滚动事件监听 + 自定义属性（data-*）
+```
+位置计算：clientTop，offsetTop，clientHeight 以及 scrollTop 各种关于图片的高度作比对
+```
+
+- 2.getBoundingClientRect + 滚动事件 + 自定义属性（data-*）
 
 
-<!-- ##### 18.什么是MVVM？和MVM有什么区别？什么又是MVP？（https://zhuanlan.zhihu.com/p/27302766）
-- MVC
-  - M（model）用于封装业务逻辑相关得数据以及对数据得处理方法
-  - V（view）视图层，主要负责数据得展示
-  - C（controller）响应机制封装在此，当用户和应用产生交互，控制器中得触发器开始工作
-    - M和V之间使用了观察者模式，V先在M上注册，进入观察M，以便更新在M上发生改变得数据（M只是写了注册和通知V的方法，实际操作在C中）
-    - V和C之间使用了策略模式，V中引入了C得实例来实现特定得响应策略
-      - 问题：每个事件都经过controller使得这层变得十分臃肿,而且V和C一般都是一一对应，这种紧密得连接让C得复用成了问题。
+- 3.IntersectionObserver + 自定义属性（data-*）
+```
+// 创建一个IntersectionObserver实例
+const observer = new IntersectionObserver(entries => {
+  // 对每个交叉状态的元素进行处理
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // 当元素进入视口时加载图片
+      const imgElement = entry.target;
+      const imgUrl = imgElement.getAttribute('data-src');
+      imgElement.setAttribute('src', imgUrl);
+      observer.unobserve(imgElement); // 停止观察已加载的图片
+    }
+  });
+});
 
-- MVP
-  - P（Presenter），通过P来实现V和C的解耦，mvc中C只知道M的接口，因此没办法控制V的更新，MVP中，V层的接口暴露给P，因此我们可以在P层中将V和C的变化绑定在一起，以此来实现V和M的更新
+// 获取需要懒加载的图片元素
+const lazyImages = document.querySelectorAll('.lazy');
 
-- MVVM
- - VM（ViewModel视图模型）：和mvp思路是相同的，只不过通过双向绑定将V和M的同步更新给自动化，当M变化VM就会自动更新，VM变化了V也会更新，这样就将Presenter中的工作给自动化了。
+// 遍历每个图片元素，并开始观察
+lazyImages.forEach(img => {
+  observer.observe(img);
+});
+```
 
-##### 19.什么是Virtual DOM？为什么 Virtual DOM 比原生 DOM 快？
-- Virtual DOM
-  - 我们通过将模板经过一系列操作，生成一个与实际dom有着映射关系的一个ast树。
+#### 24.原型、原型链相等关系理解
+```
+1.js分为函数对象和普通对象，每个对象都有__proto__属性，但是只有函数对象才有prototype属性.
 
-- 减少了DOM的操作次数，从而避免了频繁的回流与重绘 -->
+2.Object、Function都是js内置的函数, 类似的还有我们常用到的Array、RegExp、Date、Boolean、Number、String.
+
+那么__proto__和prototype到底是什么，两个概念理解它们
+
+3.属性__proto__是一个对象，它有两个属性，constructor和__proto__
+
+4.原型对象prototype有一个默认的constructor属性，用于记录实例是由哪个构造函数创建；
+
+js之父在设计js原型、原型链的时候遵从以下两个准则
+
+1. Person.prototype.constructor == Person // **准则1：原型对象（即Person.prototype）的constructor指向构造函数本身**
+
+2. person01.__proto__ == Person.prototype // **准则2：实例（即person01）的__proto__和原型对象指向同一个地方**
+
+```

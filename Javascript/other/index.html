@@ -8,6 +8,143 @@
 </head>
 <body>
   <script>
+    
+  </script>
+
+  <script>
+    // Promise.resolve()
+    //   .then(() => {
+    //     debugger
+    //     console.log(0);
+    //     return Promise.resolve();
+    //     // return 4;
+    //   })
+    //   .then((res) => {
+    //     debugger
+    //     console.log('4');
+    //   });
+    
+    // Promise.resolve()
+    //   .then(() => {
+    //     debugger
+    //     console.log(1);
+    //   })
+    //   .then(() => {
+    //     debugger
+    //     console.log(2);
+    //   })
+    //   .then(() => {
+    //     debugger
+    //     console.log(3);
+    //   })
+    //   .then(() => {
+    //     debugger
+    //     console.log(5);
+    //   })
+    //   .then(() => {
+    //     debugger
+    //     console.log(6);
+    //   });
+  </script>
+  <!-- Promise.race   .all -->
+  <!-- <script>
+    function x1(){
+      return new Promise((res,rej)=>{
+        setTimeout(() => {
+          console.log(666);
+          res('x1')
+        }, 1000);
+      })
+    }
+    function x2(){
+      return new Promise((res,rej)=>{
+        setTimeout(() => {
+          console.log(777);
+          rej('x2')
+        }, 500);
+      })
+    }
+
+    
+    Promise._race = (pArr)=>{
+      return new Promise((resolve,reject)=>{
+        pArr.forEach(v=>{
+          Promise.resolve(v).then(
+            res=>{resolve(res)},
+            rej=>{reject(rej)}
+          )
+        })
+      })
+    }
+
+    Promise._all = (pArr)=>{
+      return new Promise((resolve,reject)=>{
+        let ret = [];
+        let count = 0;
+        pArr.forEach(v=>{
+          Promise.resolve(v).then(
+            res => {
+              count++;
+              ret.push(res);
+
+              if(count === pArr.length){
+                resolve(ret)
+              }
+            },
+            rej=>{reject(rej)}
+          )
+        })
+
+        // 如果是空数组 直接返回
+        if(pArr.length === 0){
+          resolve(ret)
+        }
+      })
+    }
+
+    // Promise.race([x1(),x2()]).then((v) => {
+    //   console.log('race',v)
+    // }).catch(err=>{
+    //   console.log('err',err);
+    // });
+      
+    Promise.race([1,2,3]).then((v) => {
+      console.log('race',v)
+    });
+
+    // Promise._race([x1(),x2()]).then((v) => {
+    //   console.log('race',v)
+    // }).catch(err2=>{
+    //   console.log('err2',err2);
+    // });
+
+    Promise._race([1,2,3]).then((v) => {
+      console.log('race',v)
+    });
+
+    Promise.all([1,2,3]).then((v) => {
+      console.log('all',v)
+    });
+
+    Promise._all([1,2,3]).then((v) => {
+      console.log('all',v)
+    });
+
+    // Promise.all([x1(),x2()]).then((v) => {
+    //   console.log('all',v)
+    // }).catch(err=>{
+    //   console.log('err-all',err)
+    // });
+
+    // Promise._all([x1(),x2()]).then((v) => {
+    //   console.log('all',v)
+    // }).catch(err=>{
+    //   console.log('err-all',err)
+    // });
+  </script> -->
+
+  <!-- bind call apply -->
+  <!-- <script>
     Function.prototype.myApply = function(obj,args){
       let fn = Symbol('fn')
       let o =obj || window;
@@ -29,8 +166,8 @@
       let that = this;
       
       let fBound = function(){
-        // 解决new 操作是this指向问题
-        that.myApply(this instanceof that?this:obj,args.concat(Array.prototype.slice.call(arguments)))
+        // 解决new 操作 this指向问题
+        that.myApply(this instanceof that?this:obj,args.concat([...arguments]))
       }
       // 继承属性和方法
       fBound.prototype = Object.create(that.prototype)
@@ -42,7 +179,7 @@
 
     let fn1 = hello.myBind({name:666},222)
     new fn1(3333)
-  </script>
+  </script> -->
 
   <!-- 深浅拷贝 -->
   <!-- <script>
@@ -89,26 +226,23 @@
     window.addEventListener('resize',throttle(resize,2000))
     // 防抖：事件被触发n秒后，事件执行，如果再这段时间内事件再次被触发，重新计时
     function debounce(fn,wait){
-      console.log('666666');
       let timer = null;
       return function(){
-        let that = this,args= arguments;
         if(timer) clearTimeout(timer)
         timer = setTimeout(()=>{
-          fn.apply(that,args)
+          fn.apply(this,arguments)
         },wait)
       }
     }
 
-    // 节流：再规定时间内无论事件触发多少此，只会执行一次
+    // 节流：再规定时间内无论事件触发多少次，只会执行一次
     function throttle(fn,wait){
       let timer = null;
       return function(){
-        let that =this,args = arguments;
         if(!timer){
           timer = setTimeout(()=>{
             timer = null;
-            fn.apply(that,args)
+            fn.apply(this,arguments)
           },wait)
         }
       }
