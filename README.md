@@ -44,4 +44,4 @@
 
 7. https://www.html5iq.com/frontend/index
 
-8. https://vue3js.cn/
+8. https://vue-js.com/learn-vue/
