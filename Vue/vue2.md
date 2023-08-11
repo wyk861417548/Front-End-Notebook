@@ -39,7 +39,7 @@
 
 
 #### 5.vue中如何进行依赖收集？
-<img height='400px' src='./images/1.png' />
+<img height='400px' src='./images/依赖收集.png' />
 
 **dep + watcher**
 ```
@@ -315,23 +315,315 @@ new Sub().$mount('#app');
    - 使用一个独立的 Vue 实例作为事件中心，通过 `$emit` 发送事件，然后使用 `$on` 监听事件来实现组件间通信。
    - 可以在任意组件间通信，但容易导致难以维护的全局状态。
 
-#### 26.v-if和v-for 哪个优先级更高？
+#### 26.v-if和v-for 哪个优先级更高？为什么不能一起使用？
+> v-for 的优先级更高，在编译的时候，会将v-for渲染成_l函数 v-if会变成三元表达式。
+
+这种优先级关系可能会导致意想不到的结果，因为 v-if 可能会在每次循环迭代时重新计算条件并影响循环的结果，例如：flag为 false 那么v-for将不会执行
+
+```js
+<div>
+  <span v-if='flag' v-for='i in 3'></span>
+</div>
+
+function render() {
+  with(this) {
+    return _c('div', _l((3), function (i) {
+      return (flag) ? _c('span') : _e()
+    }), 0)
+  }
+}
+```
+vue在线编译网址：https://v2.template-explorer.vuejs.org （v3 去掉`v2.`就好了）
 
 #### 27.v-if、v-model、v-for实现原理
+**`v-if` 指令实现原理：**
+1. 当 Vue 编译器遇到带有 `v-if` 指令的元素时，它会在编译阶段生成对应的渲染函数代码。
+2. 在运行时，`v-if` 指令会根据条件表达式的值决定是否渲染该元素。
+3. 如果条件为真，该元素会被渲染为一个 VNode（虚拟 DOM 节点），并插入到 DOM 中；如果条件为假，该元素对应的 VNode 不会被创建，也不会插入到 DOM 中。
 
-#### 28.`Vue`中slot是如何实现的？什么时候使用它？
+**`v-model` 指令实现原理：**
+1. v-model 放在不同元素上会被编译出不同的结果,对于文本（编译成 value + input + 指令处理），value 和 input 实现了双向绑定阻止中文的触发，指令的作用就是处理中文输入完毕后，手动触发更新。
+
+```js
+<input type='input' v-model='xxx' />
+
+function render() {
+  with(this) {
+    return _c('input', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (xxx),
+        expression: "xxx"
+      }],
+      attrs: {
+        "type": "input"
+      },
+      domProps: {
+        "value": (xxx)
+      },
+      on: {
+        "input": function ($event) {
+          if ($event.target.composing) return;
+          xxx = $event.target.value
+        }
+      }
+    })
+  }
+}
+```
+2. 绑定在组件上，会被编译成一个model对象，组件在创建虚拟节点的时候会有这个对象，查看里面是否有自定义的prop 和 event，如果没有则会被解析陈value + input 的语法糖
+```
+// 自定义组件
+<my  v-model='xxx'></my>
+
+function render() {
+  with(this) {
+    return _c('my', {
+      model: {
+        value: (xxx),
+        callback: function ($$v) {
+          xxx = $$v
+        },
+        expression: "xxx"
+      }
+    })
+  }
+}
+```
+
+**`v-for` 指令实现原理：**
+1. 当 Vue 编译器遇到带有 `v-for` 指令的元素时，它会在编译阶段生成对应的渲染函数代码。
+2. 在运行时，`v-for` 指令会根据数据源生成一个包含多个循环项的数组。
+3. 对于数组的每一项，Vue 会生成对应的 VNode（虚拟 DOM 节点），然后将这些 VNode 合并成一个父级的 VNode，表示整个循环的渲染结果。
+#### 28.Vue中.sync修饰符的作用，用法及实现原理？
+和v-model一样，只是触发事件不同而已
+```
+<my type='input' :xx.sync='xxx'></my>
+
+function render() {
+  with(this) {
+    return _c('my', {
+      attrs: {
+        "type": "input",
+        "xx": xxx
+      },
+      on: {
+        "update:xx": function ($event) {
+          xxx = $event
+        }
+      }
+    })
+  }
+}
+```
 
 #### 29.`Vue.use`是干什么的？原理是什么？
+>Vue.use 是 Vue.js 框架中的一个全局方法，用于安装 Vue 插件。
 
-#### 30.`Vue`的事件修饰符有哪些？其原理是什么？
+```js
+Vue.use的两种写法 https://v2.cn.vuejs.org/v2/guide/plugins.html
 
-#### 31.Vue中.sync修饰符的作用，用法及实现原理？
+Vue.use(MyPlugin)
 
-#### 32.如何理解自定义指令
+Vue.use(MyPlugin, {})
+```
 
-#### 33.`keep-alive`平时在哪里使用？原理是？
+**原理**
+Vue.use 的原理就是通过调用插件的 install 方法（默认调用，否者调用插件，插件是函数），将插件的其他功能注册到Vue应用中。
+>简而言之就是改变插件this指向，往Vue上挂载插件方法
 
-#### 34.组件中写name选项有哪些好处及作用？
+```js
+// 源码
+function initUse(Vue) {
+  Vue.use = function (plugin) {
+    // 判断插件是否已经安装过，如果安装过则直接返回，避免重复安装
+    const installedPlugins = (this._installedPlugins || (this._installedPlugins = []));
+    if (installedPlugins.indexOf(plugin) > -1) {
+      return this;
+    }
+
+    // 额外的参数，用于传递给插件的 install 方法
+    const args = toArray(arguments, 1);
+    args.unshift(this); // 将 Vue 实例作为第一个参数传递给插件的 install 方法
+
+    // 如果插件具有 install 方法，则调用 install 方法安装插件
+    if (typeof plugin.install === 'function') {
+      plugin.install.apply(plugin, args);
+    } else if (typeof plugin === 'function') {
+      plugin.apply(null, args);
+    }
+
+    // 标记插件已安装
+    installedPlugins.push(plugin);
+
+    return this;
+  };
+}
+
+```
+
+
+#### 30.组件中写name选项有哪些好处及作用？
+- 标识组件
+- name属性的组件可以被递归调用，
+- 项目使用 keep-alive 时，可搭配组件 name 进行缓存过滤
+
+```js
+Vue.extend = function (extendOptions: Object): Function {
+  ...
+
+  /*把组件自身也加入components中，为递归自身提供可能（递归组件也会查找components是否存在当前组件，也就是自身）*/
+  if (name) {
+    Sub.options.components[name] = Sub
+  }
+
+  ...
+}
+```
+
+#### 31.`Vue`中slot是如何实现的？什么时候使用它？
+普通插槽(普通插槽渲染作用域在父组件中的)
+  - 在解析组件的时候会将组件的 children 放到 componentoptions 上作为虚拟节点的属性
+  - 将children职出来放到组件的 vm.$options.renderChildren中
+  - 做出一个映射表放到vm.$slots上 ->将结果放到 vm.$scopeslots上vm.$scopeslots - (a:fn,b:fn,default:fn]
+  - 渲染组件的时候会调用 t 方法 此时会去vm.scopeslots找到对应的还数来渲染内容
+- 具名插槽 多增加了个名字
+
+- 作用城插槽《普通插槽渲染作用城在子组件中的)
+  - 渲染插槽选择的作用域是子组件的 作用域插槽染的时候不会作为hildren，将作用域插槽做成了一个属性scopedslots
+  - 制作一个映射关系 $scopedslots = {default:fn:function({msg})(return _c('div',{},[_v(_s(msg))])}}}
+  - 稍后渲染组件的模板的时候 会通过nae找到对应的数将数据传入到中此时才染虚拟节点,用这个虚拟节点替换("default")
+
+
+#### 32.`keep-alive`原理是？
+***！！！注意在 Vue 2.6.14 中<keep-alive> 组件并不会直接监听其子组件的生命周期钩子。而是依赖于 Vue 提供的一种特殊机制来处理缓存和重用组件。***
+
+`<keep-alive>`是Vue中内置的一个抽象组件 核心 render（组件的核心渲染方法） + cacheVNode（虚拟节点（VNode）缓存起来）
+  - 1.默认缓存加载过的组件对应的实例，在keep-alive mount 和 update 中调用 cacheVNode 方法去缓存当前组件实例，下次组件切换加载的时候找到对应缓存的节点进行初始化
+  - 2.通过监听`include` 和 `exclude` 属性，去更改缓存规则，
+  - 3.最后内部还采用了LRU算法进行优化。
+
+>LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率也更高”
+
+<img height='200px' src='./images/LRU.png' />
+
+
+1.将新数据从尾部插入到`this.keys`中；
+2.每当缓存命中（即缓存数据被访问），则将数据移到`this.keys`的尾部；
+3.当`this.keys`满的时候，将头部的数据丢弃；
+
+>LRU的核心思想是如果数据最近被访问过，那么将来被访问的几率也更高，所以我们将命中缓存的组件key重新插入到`this.keys`的尾部，这样一来，`this.keys`中越往头部的数据即将来被访问几率越低，所以当缓存数量达到最大值时，我们就删除将来被访问几率最低的数据，即`this.keys`中第一个缓存的组件。这也就之前加粗强调的已缓存组件中最久没有被访问的实例会被销毁掉的原因所在。
+
+
+
+cacheVNode 方法用于缓存和管理组件实例，确保在切换组件时能够正确地缓存和复用之前的组件状态。它会在组件切换时被调用，将当前的组件实例缓存起来。
+
+```js
+mounted () {
+  this.cacheVNode()
+
+  /* 监视include以及exclude，在被修改的时候对cache进行修正 */
+  this.$watch('include', val => {
+    pruneCache(this, name => matches(val, name))
+  })
+  this.$watch('exclude', val => {
+    pruneCache(this, name => !matches(val, name))
+  })
+},
+
+methods:{
+  // 在 KeepAlive 内部的一个方法，用于缓存虚拟节点和相关信息
+  cacheVNode() {
+    // 从 this 中解构出需要的属性
+    const { cache, keys, vnodeToCache, keyToCache } = this;
+
+    // 如果有 vnodeToCache，即有需要缓存的 VNode
+    if (vnodeToCache) {
+      // 从 vnodeToCache 中解构出需要的属性
+      const { tag, componentInstance, componentOptions } = vnodeToCache;
+
+      // 将相关信息存入 cache 对象中
+      cache[keyToCache] = {
+        name: getComponentName(componentOptions),
+        tag,
+        componentInstance,
+      };
+
+      // 将 keyToCache 添加到 keys 数组中
+      keys.push(keyToCache);
+
+      // 如果设置了最大缓存数量，并且 keys 数组长度超过了最大值
+      if (this.max && keys.length > parseInt(this.max)) {
+        // 从缓存中删除最早的一个 entry
+        pruneCacheEntry(cache, keys[0], keys, this._vnode);
+      }
+
+      // 清空 vnodeToCache，以便下次缓存
+      this.vnodeToCache = null;
+    }
+  }
+}
+```
+render 方法在每次组件渲染时被调用，它会根据缓存策略判断是否需要缓存当前的组件实例，以及如何进行缓存。同时，render 方法会根据缓存标志属性设置 vnode 的属性，标记当前 vnode 需要被缓存。最终，render 方法返回一个虚拟节点，用于组件的渲染。
+```js
+// KeepAlive 组件的 render 方法
+render() {
+  const slot = this.$slots.default; // 获取默认插槽内容
+  const vnode: VNode = getFirstComponentChild(slot); // 获取第一个组件类型的子节点
+
+  // 获取子节点的 componentOptions
+  const componentOptions: ?VNodeComponentOptions = vnode && vnode.componentOptions;
+
+  if (componentOptions) {
+    // 获取组件名称
+    const name: ?string = getComponentName(componentOptions);
+    const { include, exclude } = this;
+
+    // 如果组件不在 include 中，或者在 exclude 中，则直接返回 vnode，不进行缓存
+    if (
+      // not included
+      (include && (!name || !matches(include, name))) ||
+      // excluded
+      (exclude && name && matches(exclude, name))
+    ) {
+      return vnode;
+    }
+
+    const { cache, keys } = this;
+    const key: ?string = vnode.key == null
+      // 如果 vnode 没有设置 key，则使用组件构造函数的 cid 和 tag 来生成一个 key
+      ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
+      : vnode.key;
+
+    // 如果已经有缓存，则从缓存中获取组件实例给 vnode
+    if (cache[key]) {
+      vnode.componentInstance = cache[key].componentInstance;
+      // 调整该组件 key 的顺序，将其从原来的位置删除并重新放在最后一个
+      remove(keys, key);
+      keys.push(key);
+    } else {
+      // 延迟设置缓存直到更新
+      this.vnodeToCache = vnode;
+      this.keyToCache = key;
+    }
+
+    // 设置 vnode 的 data 属性，标记为 keepAlive
+    vnode.data.keepAlive = true;
+  }
+
+  // 返回 vnode 或者默认插槽的第一个节点
+  return vnode || (slot && slot[0]);
+}
+```
+
+
+
+#### 33.如何理解自定义指令
+
+#### 34.`Vue`的事件修饰符有哪些？其原理是什么？
+14种修饰符：https://juejin.cn/post/6981628129089421326
+
 
 
 
