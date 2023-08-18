@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="pragma" content="no-cache">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>签名demo</title>
+
+<style>
+body{margin:0; padding:0; background: #efefef; user-select: none}
+
+.btn{display: block; color: #FFF; background: linear-gradient(to right, #04deea 0%,#06e5c8); box-shadow: 0 4px 8px rgba(5,214,209,.4); border-radius: 4px; padding: 10px 0; text-align: center;}
+.btn:active{opacity: .5}
+</style>
+</head>
+<body>
+<div style="height: 20px"></div>
+<div id="can" style="margin: 15px; padding: 0; background: #FFF">
+  <canvas style="display: block"></canvas>
+</div>
+
+<div style="margin: 15px">
+  <a class="btn" id="btn-clear">清空</a>
+</div>
+
+<div style="margin: 15px">
+  <a class="btn" id="btn-records">记录图片</a>
+</div>
+
+<script>
+var Kimsignatrue = function(id){
+  var bot;//画布div
+  var X,Y,X1,Y1;//坐标
+  var flag=0;
+  var time;//定时器ID
+  var color=0;//记住所选颜色
+  var lineW=2;//画笔粗细
+  var canvas;//创建画布
+  var context;//获取上下文
+  var isMouseDown=false;//记录鼠标是否按下
+
+  var touchfixX,touchfixY;
+
+  //鼠标按下
+  var mouseDownAction = function(e){
+    //console.log(e);
+    e.preventDefault();
+    isMouseDown=true;
+
+    //记录下鼠标点击的时候的位置
+    X = e.offsetX ? e.offsetX : e.touches[0].pageX - touchfixX;
+    Y = e.offsetY ? e.offsetY : e.touches[0].pageY - touchfixY;
+
+    context.beginPath();
+  }
+
+  //鼠标弹起来
+  var mouseUpAction = function(e){
+    isMouseDown=false;
+    flag=0;
+  }
+
+  //鼠标移动
+  var mouseMoveAction = function(e){
+    if(isMouseDown){
+      
+      X1= e.offsetX ? e.offsetX : e.touches[0].pageX - touchfixX;
+      Y1= e.offsetY ? e.offsetY : e.touches[0].pageY - touchfixY;
+
+      drowline(X,Y,X1,Y1);
+      flag++;
+    }
+  }
+
+  //绘制
+  var drowline = function(num1,num2,num3,num4){
+
+    //移动画笔的初始位置
+    context.moveTo(num1,num2);
+
+    context.lineWidth=lineW;
+
+    context.strokeStyle="#000000";
+
+    //移动画笔的结束位置
+    context.lineTo(num3,num4);
+
+    //开始绘制
+    context.stroke();
+
+    if(flag!=0){
+      X=X1;
+      Y=Y1;
+    }
+  }
+
+  //创建画布
+  var container = document.getElementById(id);
+
+  console.log([container]);
+  canvas        = container.querySelector("canvas");
+
+  touchfixX = container.offsetLeft;
+  touchfixY = container.offsetTop;
+
+  canvas.width  = container.clientWidth;
+  canvas.height = 300;
+
+  //获取上下文
+  context = canvas.getContext("2d");
+
+  var userAgent = navigator.userAgent.toLocaleLowerCase();
+  //console.log(userAgent);
+
+  var regex = /mobile/;
+
+  if(regex.test(userAgent)){
+    //alert(1);
+    canvas.addEventListener("touchstart",mouseDownAction, false);
+    canvas.addEventListener("touchmove",mouseMoveAction, false);
+    window.addEventListener("touchend",mouseUpAction,false);
+
+  }else{
+
+    canvas.addEventListener("mousedown",mouseDownAction, false);
+    canvas.addEventListener("mousemove",mouseMoveAction, false);
+    window.addEventListener("mouseup",mouseUpAction,false);
+
+  }
+  
+  var controller = {};
+
+  //清理画布
+  controller.clear = function(){
+    context.clearRect(0,0,canvas.width,canvas.height);
+  }
+
+  //获取图片 base64
+  controller.getData = function(quality){
+    return canvas.toDataURL("image/png",quality ? quality : 0.9);
+  }
+
+  return controller;
+}
+
+var signatrue = Kimsignatrue("can");
+
+//清空
+document.getElementById("btn-clear").addEventListener("click",signatrue.clear,false);
+
+document.getElementById("btn-records").addEventListener("click",function(e){
+  var img = new Image();
+  img.src = signatrue.getData();
+  img.style["width"] = "20%";
+
+  document.body.appendChild(img);
+},false);
+
+</script>
+</body>
+</html>

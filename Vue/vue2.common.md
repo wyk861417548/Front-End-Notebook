@@ -40,5 +40,28 @@ export default {
     ...cmps
   },
 }
+```
 
+#### 多入口打包
+```
+module.exports = {
+  publicPath:'./',
+
+  outputDir:'build',
+  
+  pages: {
+    index: {
+      entry: "src/views/hospital/main.js",
+      template: "public/index.html",
+      filename: "index.html",
+    },
+    code:{
+      entry: 'src/views/code/main.js', // page 的入口
+      template: 'public/code.html',// 模板来源
+      filename: 'code.html',// 在 build/code.html 的输出
+    }
+  },
+
+  productionSourceMap:false,
+}
 ```
