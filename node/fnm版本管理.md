@@ -19,6 +19,8 @@
 
 - 3.运行 `. $PROFILE` 重新运行配置文件
 
+- 3.1如果运行`. $PROFILE`提示，`无法加载文件 C:\Users\xxx\xxx.ps1，因为在此系统上禁止运行脚本`,输入`Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`执行,提示是否更改策略输入`y`确定，最后再重新输入命令`. $PROFILE`执行以下就好了。出现这种问题是由于脚本的执行策略没有正确配置，和vscode不能运行命令一样，更改下策略就好了。
+
 #### fnm 命令
 ###### 常用命令
 ```
