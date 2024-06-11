@@ -488,10 +488,11 @@ Vue.extend = function (extendOptions: Object): Function {
   - 将children职出来放到组件的 vm.$options.renderChildren中
   - 做出一个映射表放到vm.$slots上 ->将结果放到 vm.$scopeslots上vm.$scopeslots - (a:fn,b:fn,default:fn]
   - 渲染组件的时候会调用 t 方法 此时会去vm.scopeslots找到对应的还数来渲染内容
+
 - 具名插槽 多增加了个名字
 
 - 作用城插槽《普通插槽渲染作用城在子组件中的)
-  - 渲染插槽选择的作用域是子组件的 作用域插槽染的时候不会作为hildren，将作用域插槽做成了一个属性scopedslots
+  - 渲染插槽选择的作用域是子组件的 作用域插槽染的时候不会作为children，将作用域插槽做成了一个属性scopedslots
   - 制作一个映射关系 $scopedslots = {default:fn:function({msg})(return _c('div',{},[_v(_s(msg))])}}}
   - 稍后渲染组件的模板的时候 会通过nae找到对应的数将数据传入到中此时才染虚拟节点,用这个虚拟节点替换("default")
 

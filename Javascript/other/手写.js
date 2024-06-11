@@ -125,7 +125,7 @@ function objectFactory(){
 
   let result = fn.apply(object,arguments)
 
-  let rType = typeof rType;
+  let rType = typeof result;
   return (result != null && (['object','function'].includes(rType)))?result:object;
 }
 

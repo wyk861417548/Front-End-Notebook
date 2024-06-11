@@ -131,7 +131,7 @@ function objectFactory(){
 
   let result = fn.apply(object,arguments)
 
-  let rType = typeof rType;
+  let rType = typeof result;
   return (result != null && (['object','function'].includes(rType)))?result:object;
 }
 ```
@@ -313,7 +313,7 @@ function cloneDeep(target,map = new WeakMap()){
 ```
 
 #### 15.call,apply,bind实现
-````
+```
 /**
  * call与apply 区别：传参不一样
  * @param {*} obj 
